@@ -1,13 +1,14 @@
 {
   "name": "create-codestitch-astro",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Scaffold a new Codestitch Astro project",
   "bin": {
     "create-codestitch-astro": "./index.js"
   },
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
-    "@bluwy/giget-core": "^0.1.6"
+    "@bluwy/giget-core": "^0.1.6",
+    "ora": "^9.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
