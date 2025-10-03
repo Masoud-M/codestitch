@@ -1,2 +1,2 @@
-# codestitch
+# Codestitch Astro kit installer
 

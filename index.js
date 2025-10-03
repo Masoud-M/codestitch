@@ -7,16 +7,31 @@ const fs = require("fs")
 
 const choices = ["Beginner", "Intermediate", "Advanced"]
 let selected = 0
+let projectName = ""
 
-// Hide the cursor
+// Hide cursor
 process.stdout.write("\x1B[?25l")
+
+// Helper to ask for input
+function askQuestion(query) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    })
+    return new Promise((resolve) => {
+        rl.question(query, (answer) => {
+            rl.close()
+            resolve(answer.trim())
+        })
+    })
+}
 
 function render() {
     console.clear()
     console.log("Choose which kit you want to install:\n")
     choices.forEach((choice, i) => {
         if (i === selected) {
-            console.log(`> ${choice}`) // highlight selected
+            console.log(`> ${choice}`)
         } else {
             console.log(`  ${choice}`)
         }
@@ -25,7 +40,28 @@ function render() {
 }
 
 async function installTemplate(choice) {
+    // 🔧 disable raw mode & remove key listener so input works cleanly
+    if (process.stdin.isTTY) process.stdin.setRawMode(false)
+    process.stdin.removeListener("keypress", handleKeypress)
+
+    console.clear()
     console.log(`\n🚀 Installing ${choice} kit...\n`)
+
+    // 1️⃣ Ask for project name
+    projectName = await askQuestion("📁 Enter a name for your project: ")
+    if (!projectName) {
+        console.error("❌ Project name cannot be empty.")
+        process.stdout.write("\x1B[?25h")
+        process.exit(1)
+    }
+
+    // 2️⃣ Confirm
+    const confirm = await askQuestion(`\nCreate project in folder "${projectName}"? (Y/n): `)
+    if (confirm.toLowerCase() === "n") {
+        console.log("❌ Installation cancelled.")
+        process.stdout.write("\x1B[?25h")
+        process.exit(0)
+    }
 
     // Define repo URL based on choice
     let repoUrl = ""
@@ -45,7 +81,7 @@ async function installTemplate(choice) {
     }
 
     // Destination folder
-    const targetDir = path.resolve(process.cwd(), choice.toLowerCase())
+    const targetDir = path.resolve(process.cwd(), projectName)
 
     // Prevent overwrite
     if (fs.existsSync(targetDir)) {
@@ -74,7 +110,6 @@ function handleKeypress(str, key) {
         selected = (selected + 1) % choices.length
         render()
     } else if (key.name === "return") {
-        process.stdin.setRawMode(false)
         installTemplate(choices[selected])
     } else if (key.name === "c" && key.ctrl) {
         process.stdout.write("\x1B[?25h")
@@ -85,6 +120,6 @@ function handleKeypress(str, key) {
 // Initialize key listener
 readline.emitKeypressEvents(process.stdin)
 if (process.stdin.isTTY) process.stdin.setRawMode(true)
-
 process.stdin.on("keypress", handleKeypress)
+
 render()
