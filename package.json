@@ -1,6 +1,6 @@
 {
   "name": "create-codestitch-astro",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Scaffold a new Codestitch Astro project",
   "bin": {
     "create-codestitch-astro": "./index.js"

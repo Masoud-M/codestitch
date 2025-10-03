@@ -18,9 +18,9 @@ create-codestitch-astro
 ```
 
 ## How it works
-Use the arrow keys to select a kit.
-Enter a project name.
-Confirm, and the selected starter kit will be downloaded and set up in a new folder.
+- Use the arrow keys to select a kit.
+- Enter a project name.
+- Confirm, and the selected starter kit will be downloaded and set up in a new folder.
 
 ## Requirements
 Node.js 18+
