@@ -1,6 +1,6 @@
 {
   "name": "codestitch-astro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Interactive CLI to install Codestitch Astro kits",
   "bin": {
     "astro-kit": "./index.js"
