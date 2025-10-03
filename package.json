@@ -1,0 +1,21 @@
+{
+  "name": "codestitch-astro",
+  "version": "0.0.1",
+  "description": "A simple way to install Codestitch Astro kits",
+  "keywords": [
+    "codestitch-astro"
+  ],
+  "license": "MIT",
+  "author": "masoud-m",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "codestitch": "./index.js"
+  },
+  "dependencies": {
+    "@bluwy/giget-core": "^0.1.6"
+  }
+}
