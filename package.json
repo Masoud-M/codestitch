@@ -1,9 +1,9 @@
 {
-  "name": "codestitch-astro",
-  "version": "0.0.2",
-  "description": "Interactive CLI to install Codestitch Astro kits",
+  "name": "create-codestitch-astro",
+  "version": "0.0.4",
+  "description": "Scaffold a new Codestitch Astro project",
   "bin": {
-    "astro-kit": "./index.js"
+    "create-codestitch-astro": "./index.js"
   },
   "type": "commonjs",
   "dependencies": {
@@ -14,7 +14,9 @@
   },
   "keywords": [
     "codestitch-astro",
-    "codestitch-cli"
+    "codestitch-cli",
+    "scaffold",
+    "create-codestitch-astro"
   ],
   "author": "masoud-m",
   "license": "MIT"

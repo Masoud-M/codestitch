@@ -1,25 +1,26 @@
-# Codestitch Astro Kit Installer
+# Create Codestitch Astro
 
-Easily install Codestitch Astro starter kits with an interactive CLI.
-
-## Installation
-
-Install the package globally to use it across multiple projects:
-
-```bash
-npm install -g codestitch-astro
-```
+🚀 Quickly scaffold a new Astro project with Codestitch starter kits using an interactive CLI.
 
 ## Usage
 
-Run the CLI:
+You don’t need to install anything globally. Just run:
 
 ```bash
-astro-kit
+npx create-codestitch-astro
 ```
 
+or, if you prefer global install:
+
+```bash
+npm install -g create-codestitch-astro
+create-codestitch-astro
+```
+
+## How it works
 Use the arrow keys to select a kit.
-
 Enter a project name.
+Confirm, and the selected starter kit will be downloaded and set up in a new folder.
 
-Confirm to download and set up the starter kit in a new folder.
+## Requirements
+Node.js 18+
