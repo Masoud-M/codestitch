@@ -13,18 +13,18 @@ async function main() {
     intro(chalk.cyan("🚀 Welcome to Codestitch Astro Kit Installer"));
 
     const kitChoice = await select({
-        message: chalk.cyan("🚧 Choose which Astro kit you want to install:"),
+        message: chalk.bold("Choose which Astro kit you want to install:"),
         options: [
             {
-                label: `${chalk.green("✨ Beginner")}\n  ${chalk.dim("A minimal starter to explore Astro basics")}`,
+                label: `${chalk.greenBright("✨ Beginner")}  ${chalk.dim("— Starter kit for learning Astro basics")}`,
                 value: "Beginner",
             },
             {
-                label: `${chalk.yellow("🧠 Intermediate")}\n  ${chalk.dim("Includes blog functionality out of the box(DecapCMS integration)")}`,
+                label: `${chalk.cyanBright("🧠 Intermediate")}  ${chalk.dim("— Blog ready with DecapCMS integration")}`,
                 value: "Intermediate",
             },
             {
-                label: `${chalk.blue("🚀 Advanced")}\n  ${chalk.dim("Multilingual setup with i18n + DecapCMS")}`,
+                label: `${chalk.magentaBright("🚀 Advanced")}  ${chalk.dim("— i18n + DecapCMS setup for production")}`,
                 value: "Advanced",
             },
         ],
