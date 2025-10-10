@@ -22,5 +22,13 @@
     "create-codestitch-astro"
   ],
   "author": "masoud-m",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Masoud-M/codestitch"
+  },
+  "bugs": {
+    "url": "https://github.com/Masoud-M/codestitch/issues"
+  },
+  "homepage": "https://github.com/Masoud-M/codestitch#readme"
 }
