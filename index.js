@@ -1,119 +1,126 @@
 #!/usr/bin/env node
 
-import readline from "readline"
-import { downloadTemplate } from "@bluwy/giget-core"
-import path from "path"
-import fs from "fs"
-import ora from "ora"
+import { intro, outro, select, text, confirm, spinner } from "@clack/prompts";
+import { downloadTemplate } from "@bluwy/giget-core";
+import { execSync } from "child_process";
+import path from "path";
+import fs from "fs";
+import chalk from "chalk";
 
-const choices = ["Beginner", "Intermediate", "Advanced"]
-let selected = 0
-let projectName = ""
+async function main() {
+    console.clear();
 
-// Hide cursor
-process.stdout.write("\x1B[?25l")
+    intro(chalk.cyan("🚀 Welcome to Codestitch Astro Kit Installer"));
 
-// Helper to ask for input
-function askQuestion(query) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    })
-    return new Promise((resolve) => {
-        rl.question(query, (answer) => {
-            rl.close()
-            resolve(answer.trim())
-        })
-    })
-}
+    const kitChoice = await select({
+        message: chalk.cyan("🚧 Choose which Astro kit you want to install:"),
+        options: [
+            {
+                label: `${chalk.green("✨ Beginner")}\n  ${chalk.dim("A minimal starter to explore Astro basics")}`,
+                value: "Beginner",
+            },
+            {
+                label: `${chalk.yellow("🧠 Intermediate")}\n  ${chalk.dim("Includes blog functionality out of the box(DecapCMS integration)")}`,
+                value: "Intermediate",
+            },
+            {
+                label: `${chalk.blue("🚀 Advanced")}\n  ${chalk.dim("Multilingual setup with i18n + DecapCMS")}`,
+                value: "Advanced",
+            },
+        ],
+    });
 
-function render() {
-    console.clear()
-    console.log("Choose which kit you want to install:\n")
-    choices.forEach((choice, i) => {
-        if (i === selected) {
-            console.log(`> ${choice}`)
-        } else {
-            console.log(`  ${choice}`)
-        }
-    })
-    console.log("\nUse ↑/↓ arrows and press Enter to confirm.")
-}
-
-async function installTemplate(choice) {
-    if (process.stdin.isTTY) process.stdin.setRawMode(false)
-    process.stdin.removeListener("keypress", handleKeypress)
-
-    console.clear()
-    console.log(`\n🚀 Installing ${choice} kit...\n`)
-
-    projectName = await askQuestion("📁 Enter a name for your project: ")
-    if (!projectName) {
-        console.error("❌ Project name cannot be empty.")
-        process.stdout.write("\x1B[?25h")
-        process.exit(1)
+    if (!kitChoice) {
+        outro(chalk.red("❌ Installation cancelled."));
+        process.exit(0);
     }
 
-    const confirm = await askQuestion(`\nCreate project in folder "${projectName}"? (Y/n): `)
-    if (confirm.toLowerCase() === "n") {
-        console.log("❌ Installation cancelled.")
-        process.stdout.write("\x1B[?25h")
-        process.exit(0)
-    }
+    const projectName = await text({
+        message: "Enter a name for your project:",
+        placeholder: "my-codestitch-site",
+        validate(value) {
+            if (!value || value.trim() === "") return "Project name cannot be empty.";
+        },
+    });
 
-    let repoUrl = ""
-    switch (choice) {
-        case "Beginner":
-            repoUrl = "github:CodeStitchOfficial/Beginner-Astro-Starter-Kit"
-            break
-        case "Intermediate":
-            repoUrl = "github:CodeStitchOfficial/Intermediate-Astro-Decap-CMS"
-            break
-        case "Advanced":
-            repoUrl = "github:CodeStitchOfficial/Advanced-Astro-i18n"
-            break
-    }
-
-    const targetDir = path.resolve(process.cwd(), projectName)
+    const targetDir = path.resolve(process.cwd(), projectName);
 
     if (fs.existsSync(targetDir)) {
-        console.error(`❌ Directory "${targetDir}" already exists.`)
-        process.stdout.write("\x1B[?25h")
-        process.exit(1)
+        outro(chalk.red(`❌ Directory "${projectName}" already exists.`));
+        process.exit(1);
     }
 
-    const spinner = ora(`Downloading ${choice} kit...`).start()
+    const proceed = await confirm({
+        message: `Create project in folder "${projectName}"?`,
+    });
+
+    if (!proceed) {
+        outro(chalk.yellow("⚠️  Installation cancelled."));
+        process.exit(0);
+    }
+
+    const repoMap = {
+        Beginner: "github:CodeStitchOfficial/Beginner-Astro-Starter-Kit",
+        Intermediate: "github:CodeStitchOfficial/Intermediate-Astro-Decap-CMS",
+        Advanced: "github:CodeStitchOfficial/Advanced-Astro-i18n",
+    };
+
+    const repoUrl = repoMap[kitChoice];
+
+
+    const s = spinner();
+    s.start(`Downloading ${kitChoice} kit...`);
 
     try {
-        await downloadTemplate(repoUrl, { dir: targetDir })
-        spinner.succeed(`✅ Successfully installed ${choice} kit into "${targetDir}"`)
+        await downloadTemplate(repoUrl, { dir: targetDir });
+        s.stop(chalk.green(`✅ Installed ${kitChoice} kit successfully!`));
     } catch (err) {
-        spinner.fail("❌ Failed to install template")
-        console.error(err.message)
+        s.stop(chalk.red("❌ Failed to download template."));
+        console.error(err.message);
+        process.exit(1);
     }
 
-    process.stdout.write("\x1B[?25h")
-    process.exit(0)
-}
+    const pm = await select({
+        message: "Choose your package manager:",
+        options: [
+            { label: "npm", value: "npm" },
+            { label: "pnpm", value: "pnpm" },
+            { label: "yarn", value: "yarn" },
+            { label: "bun", value: "bun" },
+        ],
+    });
 
-function handleKeypress(str, key) {
-    if (key.name === "up") {
-        selected = (selected - 1 + choices.length) % choices.length
-        render()
-    } else if (key.name === "down") {
-        selected = (selected + 1) % choices.length
-        render()
-    } else if (key.name === "return") {
-        installTemplate(choices[selected])
-    } else if (key.name === "c" && key.ctrl) {
-        process.stdout.write("\x1B[?25h")
-        process.exit(0)
+    const installCmd = {
+        npm: "npm install",
+        pnpm: "pnpm install",
+        yarn: "yarn install",
+        bun: "bun install",
+    }[pm];
+
+    const s2 = spinner();
+    s2.start(`Installing dependencies with ${pm}...`);
+
+    try {
+        execSync(installCmd, { stdio: "inherit", cwd: targetDir });
+        s2.stop(chalk.green(`✅ Dependencies installed successfully.`));
+    } catch (err) {
+        s2.stop(chalk.red("❌ Failed to install dependencies."));
     }
+
+    outro(
+        chalk.greenBright(`
+✅ All done!
+
+Next steps:
+  1. cd ${chalk.cyan(projectName)}
+  2. ${chalk.cyan(`${pm} run dev`)}
+
+Happy coding with Codestitch Astro! 🌟
+`)
+    );
 }
 
-// Initialize key listener
-readline.emitKeypressEvents(process.stdin)
-if (process.stdin.isTTY) process.stdin.setRawMode(true)
-process.stdin.on("keypress", handleKeypress)
-
-render()
+main().catch((err) => {
+    console.error(chalk.red("❌ Unexpected error:"), err);
+    process.exit(1);
+});
