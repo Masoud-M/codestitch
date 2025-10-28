@@ -27,6 +27,10 @@ async function main() {
                 label: `${chalk.magentaBright("🚀 Advanced")}  ${chalk.dim("— i18n + DecapCMS setup for production")}`,
                 value: "Advanced",
             },
+            {
+                label: `${chalk.magentaBright("🛒 E-commerce")}  ${chalk.dim("— Headless Shopify + DecapCMS setup for production")}`,
+                value: "Shopify",
+            },
         ],
     });
 
@@ -63,6 +67,7 @@ async function main() {
         Beginner: "github:CodeStitchOfficial/Beginner-Astro-Starter-Kit",
         Intermediate: "github:CodeStitchOfficial/Intermediate-Astro-Decap-CMS",
         Advanced: "github:CodeStitchOfficial/Advanced-Astro-i18n",
+        Shopify: "github:Masoud-M/astro-shopify"
     };
 
     const repoUrl = repoMap[kitChoice];
